@@ -12,8 +12,8 @@ use trust_dns_resolver::Resolver;
 #[clap(author, version, about, long_about = None)]
 struct Cli {
     #[clap(short = 'd', value_name = "Domain",
-    conflicts_with("domainList"),
-    required_unless_present("domainList"),
+    conflicts_with("domain_list"),
+    required_unless_present("domain_list"),
     value_delimiter(','),
     help("domain, accept multiple values"),
     next_display_order = 1
@@ -74,10 +74,22 @@ fn main() {
     let sys_resolver = Resolver::from_system_conf().expect("Failed while get dns server from system.");
 
     for domain in domainlist{
-        let resp = sys_resolver.lookup(domain.clone(), record_type).expect(&format!("Filed while lookup {}", domain));
-        let _ = resp.iter()
-            .for_each(|ans| println!("{}", ans.to_string()));
-            // .for_each(|ans| println!("{}\t{}",domain, ans.to_string()));
+        let resp = sys_resolver.lookup(domain.clone(), record_type);
+        match resp {
+            Ok(respok) => {
+                let mut is_required_type = true;
+                let _ = respok.iter()
+                    .for_each(|ans| {
+                        if ans.to_record_type() != record_type {is_required_type = false};
+                        if is_required_type{
+                            println!("{}", ans.to_string());
+                        }
+                    });
+                // .for_each(|ans| println!("{}\t{}",domain, ans.to_string()));
+            },
+            Err(e) => (),
+        }
+
     }
 
 
