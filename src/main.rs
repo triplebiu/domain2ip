@@ -82,7 +82,7 @@ fn main() {
                     .for_each(|ans| {
                         if ans.to_record_type() != record_type {is_required_type = false};
                         if is_required_type{
-                            println!("{}", ans.to_string());
+                            println!("{}\t{}\t{}", domain,record_type,ans.to_string());
                         }
                     });
                 // .for_each(|ans| println!("{}\t{}",domain, ans.to_string()));
