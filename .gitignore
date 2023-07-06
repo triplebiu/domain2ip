@@ -1,3 +1,5 @@
 /target
 *.txt
 *.list
+/.idea
+*.lock
